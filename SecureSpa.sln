@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29209.152
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureSpa", "SecureSpa.csproj", "{8B4CEDFD-3853-4CDF-874C-FC1631EFAE3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureSpa", "SecureSpa\SecureSpa.csproj", "{76496BC2-FDF9-4487-A6D0-7D5F37A94F28}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureSpa.IntegrationTests", "SecureSpa.IntegrationTests\SecureSpa.IntegrationTests.csproj", "{BDD5C740-61D0-4031-9A84-1AE010E83724}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8B4CEDFD-3853-4CDF-874C-FC1631EFAE3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B4CEDFD-3853-4CDF-874C-FC1631EFAE3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B4CEDFD-3853-4CDF-874C-FC1631EFAE3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B4CEDFD-3853-4CDF-874C-FC1631EFAE3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76496BC2-FDF9-4487-A6D0-7D5F37A94F28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76496BC2-FDF9-4487-A6D0-7D5F37A94F28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76496BC2-FDF9-4487-A6D0-7D5F37A94F28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76496BC2-FDF9-4487-A6D0-7D5F37A94F28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDD5C740-61D0-4031-9A84-1AE010E83724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDD5C740-61D0-4031-9A84-1AE010E83724}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDD5C740-61D0-4031-9A84-1AE010E83724}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDD5C740-61D0-4031-9A84-1AE010E83724}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
