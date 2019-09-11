@@ -50,7 +50,7 @@ namespace SecureSpa.IntegrationTests
                 ClientId = "SecureSpa",
                 Parameters =
                 {
-                    { "username", "demouser"},
+                    { "username", "demouser@securespa"},
                     { "password", "Pass@word1"},
                     { "scope", IdentityServerConstants.LocalApi.ScopeName }
                 }
