@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Security.Claims;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
+using IdentityModel.Client;
+using IdentityServer4;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace SecureSpa.IntegrationTests
@@ -23,13 +21,11 @@ namespace SecureSpa.IntegrationTests
         public async Task Get_WhenAuthenticated_ReturnsSuccessResult()
         {
             // Arrange
-            var client = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
-                services => services.AddControllersWithViews(
-                    options =>
-                    {
-                        options.Filters.Add(new AllowAnonymousFilter());
-                        options.Filters.Add(new FakeUserFilter());
-                    }))).CreateClient();
+            var client = _factory.CreateClient();
+
+            var token = await GetAccessToken(client);
+            
+            client.SetBearerToken(token);
 
             // Act
             var response = await client.GetAsync("/weatherforecast/");
@@ -38,19 +34,44 @@ namespace SecureSpa.IntegrationTests
             response.EnsureSuccessStatusCode();
         }
 
-        private class FakeUserFilter : IAsyncActionFilter
+        private async Task<string> GetAccessToken(HttpClient client)
         {
-            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-            {
-                context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
-                    new Claim(ClaimTypes.Name, "TestUser"),
-                    new Claim(ClaimTypes.Email, "test.user@example.com"), // add as many claims as you need
-                }));
+            var disco = await client.GetDiscoveryDocumentAsync();
 
-                await next();
+            if (disco.IsError)
+            {
+                throw new Exception(disco.Error);
             }
+
+            var response = await client.RequestTokenAsync(request: new TokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                GrantType = IdentityModel.OidcConstants.GrantTypes.ClientCredentials,
+                ClientId = "SecureSpa",
+                Parameters =
+                {
+                    { "username", "demouser"},
+                    { "password", "Pass@word1"},
+                    { "scope", IdentityServerConstants.LocalApi.ScopeName }
+                }
+            });
+
+            //var response = await client.RequestPasswordTokenAsync(new PasswordTokenRequest
+            //{
+            //    Address = disco.TokenEndpoint,
+            //    ClientId = "SecureSpa",
+            //    Scope = "SecureSpaAPI",
+
+            //    UserName = "demouser@securespa",
+            //    Password = "Pass@word1"
+            //});
+
+            if (response.IsError)
+            {
+                throw new Exception(response.Error);
+            }
+
+            return response.AccessToken;
         }
     }
 }

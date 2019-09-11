@@ -8,7 +8,7 @@ namespace SecureSpa.Data
     {
         public static async Task SeedAsync(UserManager<ApplicationUser> userManager)
         {
-            var defaultUser = new ApplicationUser { UserName = "demouser@northwind", Email = "demouser@northwind" };
+            var defaultUser = new ApplicationUser { UserName = "demouser", Email = "demouser@securespa" };
             await userManager.CreateAsync(defaultUser, "Pass@word1");
         }
     }
