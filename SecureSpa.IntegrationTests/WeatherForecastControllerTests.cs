@@ -24,7 +24,7 @@ namespace SecureSpa.IntegrationTests
         {
             // Arrange
             var client = _factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
-                services => services.AddMvc(
+                services => services.AddControllersWithViews(
                     options =>
                     {
                         options.Filters.Add(new AllowAnonymousFilter());
