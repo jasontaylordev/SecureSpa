@@ -32,7 +32,7 @@ namespace SecureSpa
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
+            
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 

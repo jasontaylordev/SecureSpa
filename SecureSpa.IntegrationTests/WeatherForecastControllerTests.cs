@@ -2,7 +2,6 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using IdentityModel.Client;
-using IdentityServer4;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -20,7 +19,7 @@ namespace SecureSpa.IntegrationTests
         [Fact]
         public async Task Get_WhenAuthenticated_ReturnsSuccessResult()
         {
-            // Arrange
+            // Arrange 
             var client = _factory.CreateClient();
 
             var token = await GetAccessToken(client);
@@ -43,28 +42,29 @@ namespace SecureSpa.IntegrationTests
                 throw new Exception(disco.Error);
             }
 
-            var response = await client.RequestTokenAsync(request: new TokenRequest
-            {
-                Address = disco.TokenEndpoint,
-                GrantType = IdentityModel.OidcConstants.GrantTypes.ClientCredentials,
-                ClientId = "SecureSpa",
-                Parameters =
-                {
-                    { "username", "demouser@securespa"},
-                    { "password", "Pass@word1"},
-                    { "scope", IdentityServerConstants.LocalApi.ScopeName }
-                }
-            });
-
-            //var response = await client.RequestPasswordTokenAsync(new PasswordTokenRequest
+            //var response = await client.RequestTokenAsync(request: new TokenRequest
             //{
             //    Address = disco.TokenEndpoint,
+            //    GrantType = IdentityModel.OidcConstants.GrantTypes.ClientCredentials,
             //    ClientId = "SecureSpa",
-            //    Scope = "SecureSpaAPI",
-
-            //    UserName = "demouser@securespa",
-            //    Password = "Pass@word1"
+            //    Parameters =
+            //    {
+            //        { "username", "demouser@securespa"},
+            //        { "password", "Pass@word1"},
+            //        { "scope", IdentityServerConstants.LocalApi.ScopeName }
+            //    }
             //});
+
+            var response = await client.RequestPasswordTokenAsync(new PasswordTokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                ClientId = "SecureSpa.IntegrationTests",
+                ClientSecret = "secret",
+
+                Scope = "SecureSpaAPI",
+                UserName = "demouser@securespa",
+                Password = "Pass@word1"
+            });
 
             if (response.IsError)
             {
