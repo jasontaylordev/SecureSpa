@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using IdentityServer4.Models;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,8 +34,23 @@ namespace SecureSpa
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-            
+                //.AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+                {
+                    options.Clients.AddIdentityServerSPA("SecureSpa", builder =>
+                    {
+                        builder.WithRedirectUri("https://localhost:44307/authentication/login-callback");
+                        builder.WithLogoutRedirectUri("https://localhost:44307/authentication/logout-callback");
+                    });
+                    options.Clients.Add(new Client
+                    {
+                        ClientId = "SecureSpa.IntegrationTests",
+                        AllowedGrantTypes = { GrantType.ResourceOwnerPassword },
+                        ClientSecrets = { new Secret("secret".Sha256()) },
+                        AllowedScopes = { "SecureSpaAPI", "openid", "profile" }
+                    });
+                });
+
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
@@ -86,7 +104,8 @@ namespace SecureSpa
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }

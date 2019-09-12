@@ -1,9 +1,11 @@
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
+using Shouldly;
 
 namespace SecureSpa.IntegrationTests
 {
@@ -17,12 +19,12 @@ namespace SecureSpa.IntegrationTests
         }
 
         [Fact]
-        public async Task Get_WhenAuthenticated_ReturnsSuccessResult()
+        public async Task Get_GivenAuthenticatedUser_ReturnsSuccessResult()
         {
-            // Arrange 
+            // Arrange
             var client = _factory.CreateClient();
 
-            var token = await GetAccessToken(client);
+            var token = await GetAccessToken(client, "demouser@securespa", "Pass@word1");
             
             client.SetBearerToken(token);
 
@@ -33,7 +35,20 @@ namespace SecureSpa.IntegrationTests
             response.EnsureSuccessStatusCode();
         }
 
-        private async Task<string> GetAccessToken(HttpClient client)
+        [Fact]
+        public async Task Get_GivenAnonymousUser_ReturnsUnauthorizedResult()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync("/weatherforecast/");
+
+            // Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        }
+
+        private async Task<string> GetAccessToken(HttpClient client, string userName, string password)
         {
             var disco = await client.GetDiscoveryDocumentAsync();
 
@@ -42,28 +57,15 @@ namespace SecureSpa.IntegrationTests
                 throw new Exception(disco.Error);
             }
 
-            //var response = await client.RequestTokenAsync(request: new TokenRequest
-            //{
-            //    Address = disco.TokenEndpoint,
-            //    GrantType = IdentityModel.OidcConstants.GrantTypes.ClientCredentials,
-            //    ClientId = "SecureSpa",
-            //    Parameters =
-            //    {
-            //        { "username", "demouser@securespa"},
-            //        { "password", "Pass@word1"},
-            //        { "scope", IdentityServerConstants.LocalApi.ScopeName }
-            //    }
-            //});
-
             var response = await client.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,
                 ClientId = "SecureSpa.IntegrationTests",
                 ClientSecret = "secret",
 
-                Scope = "SecureSpaAPI",
-                UserName = "demouser@securespa",
-                Password = "Pass@word1"
+                Scope = "SecureSpaAPI openid profile",
+                UserName = userName,
+                Password = password
             });
 
             if (response.IsError)
