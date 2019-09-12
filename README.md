@@ -24,6 +24,6 @@ Follow these steps to get your development environment set up:
   5. Open [https://localhost:5001/](https://localhost:5001/) in your browser to view the Web UI
 
 ## Technologies
-* ASP.NET Core 3 Preview 8
-* Entity Framework Core 3 Preview 8
+* ASP.NET Core 3 Preview 9
+* Entity Framework Core 3 Preview 9
 * Angular 8
